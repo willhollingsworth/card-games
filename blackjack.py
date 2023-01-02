@@ -61,7 +61,7 @@ def simulate_game(debug=0,player_limit=17):
         if debug:
             print('player busts')
         return False
-    if game.count_hand_total(1) > game.count_hand_total(1):
+    if game.count_hand_total(1) > game.count_hand_total(0):
         if debug:
             print('player count higher')
         return True
