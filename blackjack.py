@@ -1,5 +1,5 @@
 # https://en.wikipedia.org/wiki/Blackjack
-
+# https://www.youtube.com/watch?v=eyoh-Ku9TCI
 import cards
 class blackjack():
     def __init__(self,player_count=1):
@@ -41,7 +41,7 @@ class blackjack():
         return out_string
 
     def print_status(self):
-        print('Dealer has {}, total is {}'.format(self.format_cards(0),self.count_hand_total(1)))
+        print('Dealer has {}, total is {}'.format(self.format_cards(0),self.count_hand_total(0)))
         for player in range(1,self.player_count):
             print('Player {} has {}, total is {}'.format(player,self.format_cards(player),self.count_hand_total(player)))
 
@@ -49,25 +49,29 @@ class blackjack():
 def simulate_game(debug=0,player_limit=17):
     game = blackjack(player_count=2)
     game.setup_standard_game()
+    if debug : game.print_status()
     while game.count_hand_total(0) < 17:
         game.draw_card(0)
-    if game.count_hand_total(0) > 21:
-        if debug:
-            print('deal busts')
-        return True
     while game.count_hand_total(1) < player_limit:
         game.draw_card(1)
     if game.count_hand_total(1) > 21:
-        if debug:
-            print('player busts')
+        if debug : game.print_status()
+        if debug : print('player busts on',game.count_hand_total(1))
         return False
-    if game.count_hand_total(1) > game.count_hand_total(0):
-        if debug:
-            print('player count higher')
+    if game.count_hand_total(0) > 21:
+        if debug : game.print_status()
+        if debug : print('dealer busts on',game.count_hand_total(0))
+        return True
+    if game.count_hand_total(1) == game.count_hand_total(0):
+        if debug : print('tie found, rerunning')
+        return simulate_game(debug,player_limit)
+    elif game.count_hand_total(1) > game.count_hand_total(0):
+        if debug : game.print_status()
+        if debug : print('player count higher')
         return True
     else:
-        if debug:
-            print('dealer count higher')
+        if debug : game.print_status()
+        if debug : print('dealer count higher')
         return False
 
 def run_big_sim(sim_count=100,tests=[*range(14,21)]):
@@ -82,7 +86,8 @@ def run_big_sim(sim_count=100,tests=[*range(14,21)]):
 
 
 
-if __name__ == '__main__':    
+if __name__ == '__main__':
+    # simulate_game(debug=1)
     run_big_sim(1000)
     # print('Setup standard 2 player game')        
     # game = blackjack(player_count=2)
